@@ -10,7 +10,7 @@ internal class Routing {
         withTestApplication(Application::module) {
             handleRequest(HttpMethod.Get, "/").apply {
                 Assertions.assertEquals(HttpStatusCode.OK, response.status())
-                Assertions.assertEquals("Hello, world!", response.content)
+                Assertions.assertEquals("Hello world!", response.content)
             }
         }
     }
