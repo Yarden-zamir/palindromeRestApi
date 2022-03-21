@@ -41,3 +41,8 @@ fun TestApplicationEngine.withGetAllMessages(action: (TestApplicationResponse, L
     }
 }
 
+fun TestApplicationEngine.withDeleteMessage(messageId: Int, action: (TestApplicationResponse) -> Unit) {
+    with(handleRequest(HttpMethod.Delete, "/messages/$messageId")) {
+        action(response)
+    }
+}
