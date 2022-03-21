@@ -44,8 +44,8 @@ internal class MessageManipulation {
     fun `Should get empty list of messages`() {
         withTestApplication(Application::module) {
             handleRequest(HttpMethod.Get, "/messages").apply {
-                Assertions.assertEquals(HttpStatusCode.NotFound, response.status())
-                Assertions.assertEquals(
+                assertEquals(HttpStatusCode.NotFound, response.status())
+                assertEquals(
                     "No messages found",
                     response.content
                 )

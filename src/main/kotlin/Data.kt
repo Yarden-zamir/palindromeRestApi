@@ -7,9 +7,9 @@ fun Application.configureDatabase() {
 }
 
 object MessagesDb {
-    private val messagesList: MutableList<Message> = mutableListOf<Message>()
+    private var messagesList: MutableList<Message> = mutableListOf<Message>()
     fun loadDb(initialData: MutableList<Message> = mutableListOf<Message>()) {
-        messagesList.addAll(initialData)
+        messagesList = initialData
     }
 
     fun getMessages(): List<Message> {
