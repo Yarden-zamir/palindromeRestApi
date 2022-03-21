@@ -4,39 +4,44 @@ import io.ktor.server.testing.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 
 internal class MessageManipulation {
-    private fun createMessage(messageText: String) {
-
-    }
-
-    fun TestApplicationEngine.withCreateMessage(messageText: String, action: (TestApplicationResponse) -> Unit) {
-        with(handleRequest(HttpMethod.Post, "/messages") {
-            addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-            setBody(listOf("text" to messageText).formUrlEncode())
-        }) {
-            action(response)
-        }
-
-    }
 
     @Test
     fun `Should create a message`() = withTestApplication(Application::module) {
-        withCreateMessage("Porto") { response ->
+        val messageText = "Pomegranate"
+        withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
             assertEquals("Message created", response.content)
+            assertNotNull(message)
+            assertNotNull(message.text)
+            assertEquals(messageText, message.text)
+            assertEquals(message.dateEdited, message.datePosted)
+        }
+    }
+
+    @Test
+    fun `Should retrieve existing message`() = withTestApplication(Application::module) {
+        val messageText = "Tomato"
+        val index = MessagesDb.getMessages().size
+        withCreateMessage(messageText) { response, _ ->
+            assertEquals(HttpStatusCode.Created, response.status())
+        }
+        withGetMessage(index) { response, message ->
+            assertEquals(HttpStatusCode.Found, response.status())
+            message ?: return@withGetMessage
+            assertEquals(messageText, message.text)
+            assertEquals(LocalDate.now().toString(),message.datePosted)
+            assertEquals(LocalDate.now().toString(),message.dateEdited)
+
 
         }
     }
 
     @Test
-    fun `retrieve single`() {
-        TODO()
-    }
-
-    @Test
-    fun `retrieve all when empty`() {
+    fun `Should get empty list of messages`() {
         withTestApplication(Application::module) {
             handleRequest(HttpMethod.Get, "/messages").apply {
                 Assertions.assertEquals(HttpStatusCode.NotFound, response.status())
