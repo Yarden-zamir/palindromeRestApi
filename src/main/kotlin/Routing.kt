@@ -1,13 +1,16 @@
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.serialization.*
+import routes.messages
+import routes.root
 
 //file responsible for the implementation of routing, but not the routes themselves
 
 fun Application.configureRouting() {
-    install(ContentNegotiation){}
     routing {
         root()
         messages()
