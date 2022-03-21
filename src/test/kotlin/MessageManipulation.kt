@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 internal class MessageManipulation {
 
     @Test
-    fun `Should create a message`() = withTestApplication(Application::module) {
+    fun `Create a message`() = withTestApplication(Application::module) {
         val messageText = "Pomegranate"
         withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
@@ -22,7 +22,7 @@ internal class MessageManipulation {
     }
 
     @Test
-    fun `Should retrieve existing message`() = withTestApplication(Application::module) {
+    fun `Retrieve existing message`() = withTestApplication(Application::module) {
         val messageText = "Tomato"
         var id: Int? = null
         withCreateMessage(messageText) { response, message ->
@@ -38,7 +38,7 @@ internal class MessageManipulation {
     }
 
     @Test
-    fun `Should get empty list of messages`() = withTestApplication(Application::module) {
+    fun `Get empty list of messages`() = withTestApplication(Application::module) {
         withGetAllMessages { response, messages ->
             assertEquals(HttpStatusCode.NotFound, response.status())
             assertTrue(messages.isEmpty())
@@ -46,7 +46,7 @@ internal class MessageManipulation {
     }
 
     @Test
-    fun `Should get list of messages that isn't empty`() = withTestApplication(Application::module) {
+    fun `Get list of messages that isn't empty`() = withTestApplication(Application::module) {
         val messageText = "Apple"
         withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
@@ -59,7 +59,7 @@ internal class MessageManipulation {
 
 
     @Test
-    fun `Should update`() = withTestApplication(Application::module) {
+    fun `Update`() = withTestApplication(Application::module) {
         val messageText = "Carrot"
         var messageId: Int? = null
         var updatedMessage: Message? = null
@@ -82,7 +82,7 @@ internal class MessageManipulation {
     }
 
     @Test
-    fun `delete`() = withTestApplication(Application::module) {
+    fun `Delete`() = withTestApplication(Application::module) {
         var messageId: Int? = null
         val messageText = "Carrot"
 
@@ -106,6 +106,19 @@ internal class MessageManipulation {
         }
     }
 
+    @Test
+    fun `Not update none existing message`() = withTestApplication {
+        withUpdateMessage(-1, "") { response, message ->
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
+    }
+
+    @Test
+    fun `Not delete none existing message`() = withTestApplication {
+        withDeleteMessage(-1) {
+            assertEquals(HttpStatusCode.NotFound, it.status())
+        }
+    }
 
 }
 
