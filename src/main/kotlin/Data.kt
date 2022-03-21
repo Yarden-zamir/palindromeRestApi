@@ -1,6 +1,6 @@
 import io.ktor.application.*
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 fun Application.configureDatabase() {
     MessagesDb.loadDb();
@@ -30,7 +30,7 @@ var idProgression = 0
 @Serializable
 data class Message(
     val text: String,
-    val datePosted: String = LocalDate.now().toString(),
+    val datePosted: String = LocalDateTime.now().toString(),
     val dateEdited: String = datePosted
 ) {
     val id = idProgression++;

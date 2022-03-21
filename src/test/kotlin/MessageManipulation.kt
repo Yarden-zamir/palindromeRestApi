@@ -3,7 +3,7 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 internal class MessageManipulation {
@@ -24,17 +24,16 @@ internal class MessageManipulation {
     @Test
     fun `Should retrieve existing message`() = withTestApplication(Application::module) {
         val messageText = "Tomato"
-        var id = -1
+        var id: Int? = null
         withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
             id = message.id
         }
-        withGetMessage(id) { response, message ->
+        id ?: return@withTestApplication
+        withGetMessage(id!!) { response, message ->
             assertEquals(HttpStatusCode.Found, response.status())
             message ?: return@withGetMessage
             assertEquals(messageText, message.text)
-            assertEquals(LocalDate.now().toString(), message.datePosted)
-            assertEquals(LocalDate.now().toString(), message.dateEdited)
         }
     }
 
@@ -60,13 +59,51 @@ internal class MessageManipulation {
 
 
     @Test
-    fun `Should update`() {
+    fun `Should update`() = withTestApplication(Application::module) {
+        val messageText = "Carrot"
+        var messageId: Int? = null
+        var updatedMessage: Message? = null
+        withCreateMessage(messageText) { response, message ->
+            assertEquals(HttpStatusCode.Created, response.status())
+            messageId = message.id
+        }
+        messageId ?: return@withTestApplication
 
+        withUpdateMessage(messageId!!, "Golden Carrot") { response, message ->
+            assertEquals(HttpStatusCode.OK, response.status())
+            updatedMessage = message
+        }
+
+        withGetMessage(messageId!!) { response, message ->
+            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(messageId, updatedMessage!!.id)
+            //verify that lastUpdated is indeed changed
+        }
     }
 
     @Test
-    fun `delete`() {
-        TODO()
+    fun `delete`() = withTestApplication(Application::module) {
+        var messageId: Int? = null
+        val messageText = "Carrot"
+
+        withCreateMessage(messageText) { response, message ->
+            assertEquals(HttpStatusCode.Created, response.status())
+            messageId = message.id
+        }
+        messageId ?: return@withTestApplication
+        withGetMessage(messageId!!) { response, message ->
+            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(messageId, message?.id)
+        }
+
+        withDeleteMessage(messageId!!) {
+            assertEquals(HttpStatusCode.NoContent, it.status())
+        }
+
+        withGetMessage(messageId!!) { response, message ->
+            assertEquals(HttpStatusCode.NotFound, response.status())
+
+        }
     }
 
 
