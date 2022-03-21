@@ -20,3 +20,9 @@ fun TestApplicationEngine.withGetMessage(messageIndex: Int, action: (TestApplica
     }
 
 }
+
+fun TestApplicationEngine.withGetAllMessages(action: (TestApplicationResponse, List<Message>) -> Unit) {
+    with(handleRequest(HttpMethod.Get, "/messages")) {
+        action(response, MessagesDb.getMessages())
+    }
+}

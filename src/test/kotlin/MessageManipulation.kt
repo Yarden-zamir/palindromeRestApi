@@ -33,8 +33,8 @@ internal class MessageManipulation {
             assertEquals(HttpStatusCode.Found, response.status())
             message ?: return@withGetMessage
             assertEquals(messageText, message.text)
-            assertEquals(LocalDate.now().toString(),message.datePosted)
-            assertEquals(LocalDate.now().toString(),message.dateEdited)
+            assertEquals(LocalDate.now().toString(), message.datePosted)
+            assertEquals(LocalDate.now().toString(), message.dateEdited)
 
 
         }
@@ -53,21 +53,18 @@ internal class MessageManipulation {
         }
     }
 
-//    @Test
-//    fun `retrieve all after adding message`() = withTestApplication(Application::module) {
-//        with(handleRequest(HttpMethod.Post, "/messages") {
-//            addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-//            setBody(listOf("content" to "Pomegranate").formUrlEncode())
-//        }) {
-//        }
-//        with(handleRequest(HttpMethod.Get, "/messages")) {
-////            Assertions.assertEquals(HttpStatusCode.Found, response.status())
-//            Assertions.assertEquals(
-//                "Messages : [Message(content=Pomegranate, datePosted=2022-03-21, dateEdited=2022-03-21)]",
-//                response.content
-//            )
-//        }
-//    }
+    @Test
+    fun `Should get list of messages that isn't empty`() = withTestApplication(Application::module) {
+        val messageText = "Apple"
+        withCreateMessage(messageText) { response, message ->
+            assertEquals(HttpStatusCode.Created, response.status())
+        }
+        withGetAllMessages { response, messages ->
+            assertEquals(HttpStatusCode.Found, response.status())
+            assertTrue(messages.isNotEmpty())
+        }
+    }
+
 
     @Test
     fun `update`() {
@@ -81,3 +78,5 @@ internal class MessageManipulation {
 
 
 }
+
+
