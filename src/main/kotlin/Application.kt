@@ -9,5 +9,6 @@ fun main(args: Array<String>) = EngineMain.main(args)
 fun Application.module() {
     configureRouting()
     configureStatusPage()
+    configureDatabase()
 }
 

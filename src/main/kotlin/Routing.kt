@@ -4,12 +4,13 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
+//file responsible for the implementation of routing, but not the routes themselves
+
 fun Application.configureRouting() {
     install(ContentNegotiation){}
     routing {
-        get("/") {
-            call.respondText("Hello, world!")
-        }
+        root()
+        messages()
     }
 }
 
@@ -19,6 +20,5 @@ fun Application.configureStatusPage() {
             call.respond(HttpStatusCode.InternalServerError, "Internal Server Error \n\n${cause.message}")
             throw cause
         }
-
     }
 }
