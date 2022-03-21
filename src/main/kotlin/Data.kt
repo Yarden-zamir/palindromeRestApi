@@ -12,16 +12,17 @@ object MessagesDb {
         messagesList.addAll(initialData)
     }
 
-    suspend fun getMessages(): List<Message> {
+    fun getMessages(): List<Message> {
         return messagesList
     }
 
-    suspend fun getMessage(id: Int): Message? {
+    fun getMessage(id: Int): Message? {
         return messagesList.getOrNull(id)
     }
 
-    suspend fun addMessage(message: Message) {
+    fun addMessage(message: Message): Int {
         messagesList.add(message)
+        return messagesList.size - 1
     }
 }
 
