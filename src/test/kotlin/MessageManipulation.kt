@@ -2,15 +2,35 @@ import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Assertions
-import kotlin.test.*
 import org.junit.jupiter.api.Assertions.*
+import java.time.LocalDate
+import org.junit.jupiter.api.Test
+
 
 internal class MessageManipulation {
-
+    @Test
+    fun testRequests() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "/signup"){
+            addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+            setBody(listOf("username" to "JetBrains", "email" to "example@jetbrains.com", "password" to "foobar", "confirmation" to "foobar").formUrlEncode())
+        }) {
+            assertEquals("The 'JetBrains' account is created", response.content)
+        }
+    }
 
     @Test
-    fun `create`() {
-        TODO()
+    fun `create`() = withTestApplication(Application::module) {
+        with(handleRequest(HttpMethod.Post, "/messages") {
+            addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+            setBody(
+                listOf(
+                    "text" to "Pomegranate"
+                ).formUrlEncode()
+            )
+        }) {
+            assertEquals(HttpStatusCode.Created, response.status())
+            assertEquals("Message created", response.content)
+        }
     }
 
     @Test
@@ -19,17 +39,33 @@ internal class MessageManipulation {
     }
 
     @Test
-    fun `retrieve all`() {
+    fun `retrieve all when empty`() {
         withTestApplication(Application::module) {
             handleRequest(HttpMethod.Get, "/messages").apply {
-                Assertions.assertEquals(HttpStatusCode.OK, response.status())
+                Assertions.assertEquals(HttpStatusCode.NotFound, response.status())
                 Assertions.assertEquals(
-                    "[Message(id=0, datePosted=2022-03-21, content=), Message(id=1, datePosted=1970-01-01, content=ELO!)]",
+                    "No messages found",
                     response.content
                 )
             }
         }
     }
+
+//    @Test
+//    fun `retrieve all after adding message`() = withTestApplication(Application::module) {
+//        with(handleRequest(HttpMethod.Post, "/messages") {
+//            addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+//            setBody(listOf("content" to "Pomegranate").formUrlEncode())
+//        }) {
+//        }
+//        with(handleRequest(HttpMethod.Get, "/messages")) {
+////            Assertions.assertEquals(HttpStatusCode.Found, response.status())
+//            Assertions.assertEquals(
+//                "Messages : [Message(content=Pomegranate, datePosted=2022-03-21, dateEdited=2022-03-21)]",
+//                response.content
+//            )
+//        }
+//    }
 
     @Test
     fun `update`() {
@@ -40,5 +76,6 @@ internal class MessageManipulation {
     fun `delete`() {
         TODO()
     }
+
 
 }
