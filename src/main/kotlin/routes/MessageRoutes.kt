@@ -14,12 +14,13 @@ fun Route.messages() {
     route("/messages") {
         post {
             val parameters = call.receiveParameters()
-            val messageContent = parameters["text"] ?: return@post call.respondText(
+            val messageText = parameters["text"] ?: return@post call.respondText(
                 "No text parameter for message",
                 status = HttpStatusCode.BadRequest
             )
-            MessagesDb.addMessage(Message(messageContent))
-            call.respondText("Message created", status = HttpStatusCode.Created)
+            val message = Message(messageText)
+            MessagesDb.addMessage(message)
+            call.respondText("Message created with id ${message.id}", status = HttpStatusCode.Created)
         }
         get {
             if (MessagesDb.getMessages().isEmpty())

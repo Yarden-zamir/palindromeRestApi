@@ -14,7 +14,7 @@ internal class MessageManipulation {
         val messageText = "Pomegranate"
         withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
-            assertEquals("Message created", response.content)
+            assertTrue(response.content?.startsWith("Message created") ?: false)
             assertNotNull(message)
             assertNotNull(message.text)
             assertEquals(messageText, message.text)
