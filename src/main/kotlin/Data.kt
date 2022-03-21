@@ -26,9 +26,12 @@ object MessagesDb {
     }
 }
 
+var idProgression = 0
 @Serializable
 data class Message(
     val text: String,
     val datePosted: String = LocalDate.now().toString(),
     val dateEdited: String = datePosted
-)
+){
+    val id = idProgression++;
+}
