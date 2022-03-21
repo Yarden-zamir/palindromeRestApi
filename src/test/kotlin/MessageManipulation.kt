@@ -3,33 +3,30 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
-import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
 
 internal class MessageManipulation {
-    @Test
-    fun testRequests() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "/signup"){
+    private fun createMessage(messageText: String) {
+
+    }
+
+    fun TestApplicationEngine.withCreateMessage(messageText: String, action: (TestApplicationResponse) -> Unit) {
+        with(handleRequest(HttpMethod.Post, "/messages") {
             addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-            setBody(listOf("username" to "JetBrains", "email" to "example@jetbrains.com", "password" to "foobar", "confirmation" to "foobar").formUrlEncode())
+            setBody(listOf("text" to messageText).formUrlEncode())
         }) {
-            assertEquals("The 'JetBrains' account is created", response.content)
+            action(response)
         }
+
     }
 
     @Test
-    fun `create`() = withTestApplication(Application::module) {
-        with(handleRequest(HttpMethod.Post, "/messages") {
-            addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
-            setBody(
-                listOf(
-                    "text" to "Pomegranate"
-                ).formUrlEncode()
-            )
-        }) {
+    fun `Should create a message`() = withTestApplication(Application::module) {
+        withCreateMessage("Porto") { response ->
             assertEquals(HttpStatusCode.Created, response.status())
             assertEquals("Message created", response.content)
+
         }
     }
 
