@@ -10,23 +10,23 @@ internal class MessageManipulation {
 
     @Test
     fun `create`(){
-        assert(false)
+        TODO()
     }
     @Test
     fun `retrieve single`() {
-        assert(false)
+        TODO()
     }
     @Test
     fun `retrieve all`() {
-        assert(false)
+        TODO()
     }
     @Test
     fun `update`() {
-        assert(false)
+        TODO()
     }
     @Test
     fun `delete`() {
-        assert(false)
+        TODO()
     }
 
 }
