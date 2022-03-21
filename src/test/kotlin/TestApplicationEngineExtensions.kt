@@ -14,9 +14,23 @@ fun TestApplicationEngine.withCreateMessage(
 
 }
 
-fun TestApplicationEngine.withGetMessage(messageIndex: Int, action: (TestApplicationResponse, Message?) -> Unit) {
-    with(handleRequest(HttpMethod.Get, "/messages/$messageIndex")) {
-        action(response, MessagesDb.getMessage(messageIndex))
+fun TestApplicationEngine.withUpdateMessage(
+    messageId: Int,
+    messageText: String,
+    action: (TestApplicationResponse, Message) -> Unit
+) {
+    with(handleRequest(HttpMethod.Put, "/messages/$messageId") {
+        addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+        setBody(listOf("text" to messageText).formUrlEncode())
+    }) {
+        action(response, Message(messageText))
+    }
+
+}
+
+fun TestApplicationEngine.withGetMessage(messageId: Int, action: (TestApplicationResponse, Message?) -> Unit) {
+    with(handleRequest(HttpMethod.Get, "/messages/$messageId")) {
+        action(response, MessagesDb.getMessage(messageId))
     }
 
 }
@@ -26,3 +40,4 @@ fun TestApplicationEngine.withGetAllMessages(action: (TestApplicationResponse, L
         action(response, MessagesDb.getMessages())
     }
 }
+

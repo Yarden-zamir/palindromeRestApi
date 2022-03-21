@@ -17,21 +17,21 @@ object MessagesDb {
     }
 
     fun getMessage(id: Int): Message? {
-        return messagesList.getOrNull(id)
+        return messagesList.find { it.id == id }
     }
 
-    fun addMessage(message: Message): Int {
+    fun addMessage(message: Message) {
         messagesList.add(message)
-        return messagesList.size - 1
     }
 }
 
 var idProgression = 0
+
 @Serializable
 data class Message(
     val text: String,
     val datePosted: String = LocalDate.now().toString(),
     val dateEdited: String = datePosted
-){
+) {
     val id = idProgression++;
 }

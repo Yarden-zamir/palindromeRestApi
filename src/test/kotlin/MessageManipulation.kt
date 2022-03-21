@@ -1,7 +1,6 @@
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -25,31 +24,25 @@ internal class MessageManipulation {
     @Test
     fun `Should retrieve existing message`() = withTestApplication(Application::module) {
         val messageText = "Tomato"
-        val index = MessagesDb.getMessages().size
-        withCreateMessage(messageText) { response, _ ->
+        var id = -1
+        withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
+            id = message.id
         }
-        withGetMessage(index) { response, message ->
+        withGetMessage(id) { response, message ->
             assertEquals(HttpStatusCode.Found, response.status())
             message ?: return@withGetMessage
             assertEquals(messageText, message.text)
             assertEquals(LocalDate.now().toString(), message.datePosted)
             assertEquals(LocalDate.now().toString(), message.dateEdited)
-
-
         }
     }
 
     @Test
-    fun `Should get empty list of messages`() {
-        withTestApplication(Application::module) {
-            handleRequest(HttpMethod.Get, "/messages").apply {
-                assertEquals(HttpStatusCode.NotFound, response.status())
-                assertEquals(
-                    "No messages found",
-                    response.content
-                )
-            }
+    fun `Should get empty list of messages`() = withTestApplication(Application::module) {
+        withGetAllMessages { response, messages ->
+            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertTrue(messages.isEmpty())
         }
     }
 
@@ -67,8 +60,8 @@ internal class MessageManipulation {
 
 
     @Test
-    fun `update`() {
-        TODO()
+    fun `Should update`() {
+
     }
 
     @Test
