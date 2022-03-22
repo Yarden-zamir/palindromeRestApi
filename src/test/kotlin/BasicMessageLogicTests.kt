@@ -3,10 +3,9 @@ import io.ktor.http.*
 import io.ktor.server.testing.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
 
 
-internal class MessageManipulation {
+internal class BasicMessageLogicTests {
 
     @Test
     fun `Create a message`() = withTestApplication(Application::module) {
@@ -102,7 +101,6 @@ internal class MessageManipulation {
 
         withGetMessage(messageId!!) { response, message ->
             assertEquals(HttpStatusCode.NotFound, response.status())
-
         }
     }
 
