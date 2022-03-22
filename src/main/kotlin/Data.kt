@@ -38,19 +38,20 @@ data class Message(
     var dateEdited: String = datePosted
 ) {
     val id = idProgression++;
-    val logicFields: String
+    val logicFields: Map<String, String>
         get() = evaluateLogicFields()
 
     override fun toString(): String {
-        return "Message(text=$text, datePosted=$datePosted, dateEdited=$dateEdited,id=$id, logicFields={$logicFields})"
+        return "Message(text=$text, datePosted=$datePosted, dateEdited=$dateEdited,id=$id, logicFields=$logicFields)"
     }
 }
 
-fun Message.evaluateLogicFields(): String {
-    var result: String = ""
+fun Message.evaluateLogicFields(): Map<String, String> {
+    var result: MutableMap<String, String> = mutableMapOf()
     if (logicFieldsList.enabled) logicFieldsList.forEach {
-        println(it.toString())
-        result += it.invoke(this) + ","
+        result[it.name] = it.invoke(this)
+
     }
+
     return result
 }
