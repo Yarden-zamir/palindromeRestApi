@@ -17,6 +17,7 @@ fun Route.messages() {
         getMessages()
         getMessage()
         updateMessage()
+        deleteMessage()
     }
 }
 
@@ -70,5 +71,15 @@ private fun Route.updateMessage() {
             "Text parameter is illegal or missing", status = HttpStatusCode.BadRequest
         )
         call.respondText(message.toString(), status = HttpStatusCode.OK)
+    }
+}
+
+private fun Route.deleteMessage() {
+    delete("{id}") {
+        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@delete call.respondText(
+            "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
+        )
+        if (MessagesDb.removeMessage(idNumber)) call.respondText("Message with id $idNumber removed", status = HttpStatusCode.NoContent)
+        else call.respondText("No message with id $idNumber", status = HttpStatusCode.NotFound)
     }
 }
