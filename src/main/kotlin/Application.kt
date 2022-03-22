@@ -2,8 +2,7 @@ import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.serialization.*
 import io.ktor.server.netty.*
-import logicFields.isPalindrome
-import kotlin.reflect.KFunction1
+import logicFields.palindrome
 
 fun main(args: Array<String>) = EngineMain.main(args)
 
@@ -15,8 +14,8 @@ fun Application.module() {
     configureStatusPage()
     configureRouting()
 
-    configureLogicFields {
-        add(::isPalindrome)
+    configureLogicFields { //add any function you would like to evaluate as logic field
+        add(::palindrome)
     }
 }
 

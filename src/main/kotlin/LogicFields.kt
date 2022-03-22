@@ -13,7 +13,7 @@ class LogicFields : ArrayList<KFunction1<Message, String>>() {
 fun Message.evaluateLogicFields(): Map<String, String> {
     var result: MutableMap<String, String> = mutableMapOf()
     if (logicFieldsList.enabled) logicFieldsList.forEach {
-        result[it.name] = it.invoke(this)
+        result[it.name.lowercase()] = it.invoke(this)
 
     }
 

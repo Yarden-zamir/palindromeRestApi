@@ -2,6 +2,6 @@ package logicFields
 
 import Message
 
-fun isPalindrome(message: Message): String {
+fun palindrome(message: Message): String {
     return (message.text.reversed() == message.text).toString()
 }

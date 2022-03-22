@@ -14,10 +14,16 @@ import java.time.LocalDateTime
 fun Route.messages() {
     route("/messages") {
         createMessage()
+
         getMessages()
         getMessage()
+        getMessageField()
+        getMessageLogicField()
+
         updateMessage()
+
         deleteMessage()
+
     }
 }
 
@@ -79,7 +85,50 @@ private fun Route.deleteMessage() {
         val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@delete call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        if (MessagesDb.removeMessage(idNumber)) call.respondText("Message with id $idNumber removed", status = HttpStatusCode.NoContent)
+        if (MessagesDb.removeMessage(idNumber)) call.respondText(
+            "Message with id $idNumber removed",
+            status = HttpStatusCode.NoContent
+        )
         else call.respondText("No message with id $idNumber", status = HttpStatusCode.NotFound)
+    }
+}
+
+private fun Route.getMessageField() {
+    get("{id}/{field}") {
+        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
+            "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
+        )
+        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@get call.respondText(
+            "No message with id $idNumber", status = HttpStatusCode.NotFound
+        )
+        val field = call.parameters["field"]!!
+        when (field.lowercase()) {
+            "text" -> call.respondText(message.text, status = HttpStatusCode.Found)
+            "dateposted" -> call.respondText(message.datePosted, status = HttpStatusCode.Found)
+            "dateedited" -> call.respondText(message.dateEdited, status = HttpStatusCode.Found)
+            "id" -> call.respondText(message.id.toString(), status = HttpStatusCode.Found)
+            "logicfields" -> call.respondText(message.logicFields.toString(), status = HttpStatusCode.Found)
+            else -> call.respondText("No field with name $field", status = HttpStatusCode.NotFound)
+        }
+    }
+}
+
+fun Route.getMessageLogicField() {
+    get("{id}/logicfields/{logicfield}") {
+        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
+            "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
+        )
+        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@get call.respondText(
+            "No message with id $idNumber", status = HttpStatusCode.NotFound
+        )
+        val logicField = call.parameters["logicfield"]?.lowercase()
+        with(message.logicFields[logicField]) {
+            this ?: return@get call.respondText(
+                "logic field is invalid or doesn't exist",
+                status = HttpStatusCode.NotFound
+            )
+            call.respondText(this, status = HttpStatusCode.Found)
+        }
+
     }
 }
