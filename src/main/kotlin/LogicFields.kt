@@ -9,3 +9,13 @@ fun configureLogicFields(logicFunction: LogicFields.() -> Unit): LogicFields {
 class LogicFields : ArrayList<KFunction1<Message, String>>() {
     var enabled = true
 }
+
+fun Message.evaluateLogicFields(): Map<String, String> {
+    var result: MutableMap<String, String> = mutableMapOf()
+    if (logicFieldsList.enabled) logicFieldsList.forEach {
+        result[it.name] = it.invoke(this)
+
+    }
+
+    return result
+}
