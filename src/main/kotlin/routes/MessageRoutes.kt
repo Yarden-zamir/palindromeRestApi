@@ -6,6 +6,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import java.time.LocalDateTime
 
 //route content
 
@@ -15,9 +16,7 @@ fun Route.messages() {
         createMessage()
         getMessages()
         getMessage()
-        //maybe make it able to fetch by content too? ie get({content})
-
-
+        updateMessage()
     }
 }
 
@@ -45,16 +44,31 @@ private fun Route.getMessages() {
 
 private fun Route.getMessage() {
     get("{id}") {
-        println("GETTING MESSAGE")
         val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
             //we know that parameter id will never be null as this route happens only when it gets past, therefore the '!!'
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        println("MESSAGE ID IS $idNumber")
-        val message = MessagesDb.getMessages().getOrNull(idNumber)?.toString() ?: return@get call.respondText(
+
+        val message = MessagesDb.getMessages().find { it.id == idNumber }?.toString() ?: return@get call.respondText(
             "No message with id $idNumber", status = HttpStatusCode.NotFound
         )
-        println("MESSAGE IS ${message.toString()}")
         call.respondText(message, status = HttpStatusCode.Found)
+    }
+}
+
+private fun Route.updateMessage() {
+    put("{id}") {
+        val parameters = call.receiveParameters()
+        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@put call.respondText(
+            "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
+        )
+        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@put call.respondText(
+            "No message with id $idNumber", status = HttpStatusCode.NotFound
+        )
+        message.dateEdited = LocalDateTime.now().toString()
+        message.text = parameters["text"] ?: return@put call.respondText(
+            "Text parameter is illegal or missing", status = HttpStatusCode.BadRequest
+        )
+        call.respondText(message.toString(), status = HttpStatusCode.OK)
     }
 }

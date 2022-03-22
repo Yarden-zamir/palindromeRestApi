@@ -17,13 +17,13 @@ fun TestApplicationEngine.withCreateMessage(
 fun TestApplicationEngine.withUpdateMessage(
     messageId: Int,
     messageText: String,
-    action: (TestApplicationResponse, Message) -> Unit
+    action: (TestApplicationResponse, Message?) -> Unit
 ) {
     with(handleRequest(HttpMethod.Put, "/messages/$messageId") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
-        action(response, Message(messageText))
+        action(response, MessagesDb.getMessages().find { it.id == messageId })
     }
 
 }
