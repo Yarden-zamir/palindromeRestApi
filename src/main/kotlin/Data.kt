@@ -23,6 +23,10 @@ object MessagesDb {
     fun addMessage(message: Message) {
         messagesList.add(message)
     }
+
+    fun removeMessage(id: Int): Boolean {
+        return messagesList.removeIf { it.id == id }
+    }
 }
 
 var idProgression = 0
@@ -34,4 +38,19 @@ data class Message(
     var dateEdited: String = datePosted
 ) {
     val id = idProgression++;
+    val logicFields: String
+        get() = evaluateLogicFields()
+
+    override fun toString(): String {
+        return "Message(text=$text, datePosted=$datePosted, dateEdited=$dateEdited,id=$id, logicFields={$logicFields})"
+    }
+}
+
+fun Message.evaluateLogicFields(): String {
+    var result: String = ""
+    if (logicFieldsList.enabled) logicFieldsList.forEach {
+        println(it.toString())
+        result += it.invoke(this) + ","
+    }
+    return result
 }
