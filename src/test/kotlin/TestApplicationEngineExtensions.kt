@@ -9,7 +9,7 @@ fun TestApplicationEngine.withCreateMessage(
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
-        action(response, Message(messageText))
+        action(response, MessagesDb.getMessages().last())
     }
 
 }
