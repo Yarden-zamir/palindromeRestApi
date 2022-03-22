@@ -17,7 +17,11 @@ internal class LogicFieldsTests {
     }
 
     @Test
-    fun `Shows that message is not palindrome`() {
-        TODO()
+    fun `Shows that message is not palindrome`() = withTestApplication(Application::module) {
+        withCreateMessage("squash") { response, message ->
+            assertEquals(HttpStatusCode.Created, response.status())
+            assertNotNull(message.logicFields["isPalindrome"])
+            assertEquals(message.logicFields["isPalindrome"],"false")
+        }
     }
 }
