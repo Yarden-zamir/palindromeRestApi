@@ -4,14 +4,14 @@ import io.ktor.server.testing.*
 fun TestApplicationEngine.withCreateMessage(
     messageText: String,
     action: (TestApplicationResponse, Message) -> Unit
-) {
+){
     with(handleRequest(HttpMethod.Post, "/messages") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
-        action(response, MessagesDb.getMessages().last())
+        val message = MessagesDb.getMessages().last()
+        action(response, message)
     }
-
 }
 
 fun TestApplicationEngine.withUpdateMessage(

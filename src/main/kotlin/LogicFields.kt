@@ -1,8 +1,11 @@
+import kotlin.reflect.KFunction1
+
 val logicFieldsList = LogicFields()
-fun configureLogicFields(function: LogicFields.() -> Unit): LogicFields {
-    function.invoke(logicFieldsList)
+fun configureLogicFields(logicFunction: LogicFields.() -> Unit): LogicFields {
+    logicFunction.invoke(logicFieldsList)
     return logicFieldsList
 }
-class LogicFields : ArrayList<(Message) -> String>() {
+
+class LogicFields : ArrayList<KFunction1<Message, String>>() {
     var enabled = true
 }
