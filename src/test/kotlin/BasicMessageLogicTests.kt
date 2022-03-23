@@ -1,11 +1,29 @@
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import io.zonky.test.db.postgres.embedded.EmbeddedPostgres
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 
 internal class BasicMessageLogicTests {
+
+
+//    var postgres: EmbeddedPostgres? = null
+//    @BeforeEach
+//    fun setup() {
+//        postgres = EmbeddedPostgres.start()
+////        val dataSource = postgres.postgresDatabase
+//    }
+//
+//
+//
+//    @Rule
+
     @Test
     fun `Create a message`(): Unit = withTestApplication(Application::module) {
         val messageText = "Pomegranate"

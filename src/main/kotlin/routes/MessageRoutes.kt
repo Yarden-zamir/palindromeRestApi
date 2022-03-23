@@ -6,7 +6,6 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import model.Message
 import model.asJson
 import java.time.LocalDateTime
 
@@ -44,18 +43,18 @@ private fun Route.createMessage() {
         val messageText = parameters["text"] ?: return@post call.respondText(
             "No text parameter for message", status = HttpStatusCode.BadRequest
         )
-        val message = Message(messageText, idProgression++)
-        MessagesDb.addMessage(message)
+        val message = MessagesDb.createMessage(messageText)
         call.respondText(message.asJson(), status = HttpStatusCode.Created)
     }
 }
 
 private fun Route.getMessages() {
     get {
-        if (MessagesDb.getMessages().isEmpty()) call.respondText(
+        val messages = MessagesDb.getMessages()
+        if (messages.isEmpty()) call.respondText(
             "No messages found", status = HttpStatusCode.NotFound
         )
-        else call.respondText(MessagesDb.getMessages().asJson(), status = HttpStatusCode.Found)
+        else call.respondText(messages.asJson(), status = HttpStatusCode.Found)
 
     }
 }
@@ -80,14 +79,16 @@ private fun Route.updateMessage() {
         val id = call.parameters["id"]!!.toIntOrNull() ?: return@put call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        val message = MessagesDb.getMessage(id) ?: return@put call.respondText(
+        if (!MessagesDb.doesMessageExists(id)) return@put call.respondText(
             "No message with id $id", status = HttpStatusCode.NotFound
         )
-        message.text = parameters["text"] ?: return@put call.respondText(
+        val text = parameters["text"] ?: return@put call.respondText(
             "Text parameter is illegal or missing", status = HttpStatusCode.BadRequest
         )
-        message.dateEdited = LocalDateTime.now().toString()
-        call.respondText(message.asJson(), status = HttpStatusCode.OK)
+        val message = MessagesDb.updatedMessage(id, text)
+        if (message != null) {
+            call.respondText(message.asJson(), status = HttpStatusCode.OK)
+        }
     }
 }
 
@@ -96,11 +97,12 @@ private fun Route.deleteMessage() {
         val id = call.parameters["id"]!!.toIntOrNull() ?: return@delete call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        if (MessagesDb.removeMessage(id)) call.respondText(
-            "Message with id $id removed",
-            status = HttpStatusCode.NoContent
-        )
-        else call.respondText("No message with id $id", status = HttpStatusCode.NotFound)
+        if (MessagesDb.doesMessageExists(id)) {
+            MessagesDb.removeMessage(id)
+            call.respondText("Message with id $id removed", status = HttpStatusCode.NoContent)
+        } else
+            call.respondText("No message with id $id", status = HttpStatusCode.NotFound)
+
     }
 }
 

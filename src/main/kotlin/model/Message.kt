@@ -3,7 +3,7 @@ package model
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import logicFields.evaluateLogicFields
+import org.jetbrains.exposed.dao.EntityID
 import java.time.LocalDateTime
 
 val serializer = Json {
