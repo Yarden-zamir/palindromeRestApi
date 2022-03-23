@@ -44,7 +44,7 @@ private fun Route.createMessage() {
         )
         val message = Message(messageText, idProgression++)
         MessagesDb.addMessage(message)
-        call.respondText("Message created with id ${message.id}", status = HttpStatusCode.Created)
+        call.respondText(message.asJson(), status = HttpStatusCode.Created)
     }
 }
 
@@ -53,20 +53,20 @@ private fun Route.getMessages() {
         if (MessagesDb.getMessages().isEmpty()) call.respondText(
             "No messages found", status = HttpStatusCode.NotFound
         )
-        else call.respondText("Messages : " + MessagesDb.asJson(), status = HttpStatusCode.Found)
+        else call.respondText(MessagesDb.asJson(), status = HttpStatusCode.Found)
 
     }
 }
 
 private fun Route.getMessage() {
     get("{id}") {
-        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
+        val id = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
             //we know that parameter id will never be null as this route happens only when it gets past, therefore the '!!'
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
 
-        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@get call.respondText(
-            "No message with id $idNumber", status = HttpStatusCode.NotFound
+        val message = MessagesDb.getMessage(id) ?: return@get call.respondText(
+            "No message with id $id", status = HttpStatusCode.NotFound
         )
         call.respondText(message.asJson(), status = HttpStatusCode.Found)
     }
@@ -75,40 +75,40 @@ private fun Route.getMessage() {
 private fun Route.updateMessage() {
     put("{id}") {
         val parameters = call.receiveParameters()
-        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@put call.respondText(
+        val id = call.parameters["id"]!!.toIntOrNull() ?: return@put call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@put call.respondText(
-            "No message with id $idNumber", status = HttpStatusCode.NotFound
+        val message = MessagesDb.getMessage(id) ?: return@put call.respondText(
+            "No message with id $id", status = HttpStatusCode.NotFound
         )
-        message.dateEdited = LocalDateTime.now().toString()
         message.text = parameters["text"] ?: return@put call.respondText(
             "Text parameter is illegal or missing", status = HttpStatusCode.BadRequest
         )
-        call.respondText(message.toString(), status = HttpStatusCode.OK)
+        message.dateEdited = LocalDateTime.now().toString()
+        call.respondText(message.asJson(), status = HttpStatusCode.OK)
     }
 }
 
 private fun Route.deleteMessage() {
     delete("{id}") {
-        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@delete call.respondText(
+        val id = call.parameters["id"]!!.toIntOrNull() ?: return@delete call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        if (MessagesDb.removeMessage(idNumber)) call.respondText(
-            "Message with id $idNumber removed",
+        if (MessagesDb.removeMessage(id)) call.respondText(
+            "Message with id $id removed",
             status = HttpStatusCode.NoContent
         )
-        else call.respondText("No message with id $idNumber", status = HttpStatusCode.NotFound)
+        else call.respondText("No message with id $id", status = HttpStatusCode.NotFound)
     }
 }
 
 private fun Route.getMessageField() {
     get("{id}/{field}") {
-        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
+        val id = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@get call.respondText(
-            "No message with id $idNumber", status = HttpStatusCode.NotFound
+        val message = MessagesDb.getMessage(id) ?: return@get call.respondText(
+            "No message with id $id", status = HttpStatusCode.NotFound
         )
         val field = call.parameters["field"]!!
         when (field.lowercase()) {
@@ -116,7 +116,10 @@ private fun Route.getMessageField() {
             "dateposted" -> call.respondText(message.datePosted, status = HttpStatusCode.Found)
             "dateedited" -> call.respondText(message.dateEdited, status = HttpStatusCode.Found)
             "id" -> call.respondText(message.id.toString(), status = HttpStatusCode.Found)
-            "logicfields" -> call.respondText(message.logicFields.toString(), status = HttpStatusCode.Found)
+            "logicfields", "logicfield", "fields" -> call.respondText(
+                message.getLogicFieldsAsJson(),
+                status = HttpStatusCode.Found
+            )
             else -> call.respondText("No field with name $field", status = HttpStatusCode.NotFound)
         }
     }
@@ -124,11 +127,11 @@ private fun Route.getMessageField() {
 
 fun Route.getMessageLogicField() {
     get("{id}/logicfields/{logicfield}") {
-        val idNumber = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
+        val id = call.parameters["id"]!!.toIntOrNull() ?: return@get call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@get call.respondText(
-            "No message with id $idNumber", status = HttpStatusCode.NotFound
+        val message = MessagesDb.getMessage(id) ?: return@get call.respondText(
+            "No message with id $id", status = HttpStatusCode.NotFound
         )
         val logicField = call.parameters["logicfield"]?.lowercase()
         with(message.logicFields[logicField]) {
@@ -138,6 +141,5 @@ fun Route.getMessageLogicField() {
             )
             call.respondText(this, status = HttpStatusCode.Found)
         }
-
     }
 }

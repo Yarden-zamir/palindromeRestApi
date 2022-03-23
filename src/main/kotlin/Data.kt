@@ -1,9 +1,16 @@
 import io.ktor.application.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 
 fun Application.configureDatabase() {
     MessagesDb.loadDb();
+}
+
+val serializer = Json {
+    encodeDefaults = true
+    prettyPrint = true
 }
 
 object MessagesDb {
@@ -27,21 +34,30 @@ object MessagesDb {
     fun removeMessage(id: Int): Boolean {
         return messagesList.removeIf { it.id == id }
     }
+
+    fun asJson(): String {
+        return Json { prettyPrint = true }.encodeToString(messagesList)
+    }
 }
 
-var idProgression = 0
+
+
 
 @Serializable
 data class Message(
     var text: String,
+    val id: Int,
     val datePosted: String = LocalDateTime.now().toString(),
-    var dateEdited: String = datePosted
+    var dateEdited: String = datePosted,
 ) {
-    val id = idProgression++;
     val logicFields: Map<String, String>
         get() = evaluateLogicFields()
 
-    override fun toString(): String {
-        return "Message(text=$text, datePosted=$datePosted, dateEdited=$dateEdited,id=$id, logicFields=$logicFields)"
+    fun getLogicFieldsAsJson(): String {
+        return serializer.encodeToString(logicFields)
+    }
+
+    fun asJson(): String {
+        return serializer.encodeToString(this)
     }
 }

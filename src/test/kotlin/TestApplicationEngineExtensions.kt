@@ -1,48 +1,68 @@
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.decodeFromString
 
 fun TestApplicationEngine.withCreateMessage(
     messageText: String,
     action: (TestApplicationResponse, Message) -> Unit
-){
+): Message {
     with(handleRequest(HttpMethod.Post, "/messages") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
-        val message = MessagesDb.getMessages().last()
+        val message = getMessageFromResponse(response)!!
         action(response, message)
+        return message
     }
 }
 
 fun TestApplicationEngine.withUpdateMessage(
-    messageId: Int,
+    id: Int,
     messageText: String,
     action: (TestApplicationResponse, Message?) -> Unit
-) {
-    with(handleRequest(HttpMethod.Put, "/messages/$messageId") {
+): Message? {
+    with(handleRequest(HttpMethod.Put, "/messages/$id") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
-        action(response, MessagesDb.getMessages().find { it.id == messageId })
+        val message = getMessageFromResponse(response)
+        action(response, message)
+        return message
     }
 
 }
 
 fun TestApplicationEngine.withGetMessage(messageId: Int, action: (TestApplicationResponse, Message?) -> Unit) {
     with(handleRequest(HttpMethod.Get, "/messages/$messageId")) {
-        action(response, MessagesDb.getMessage(messageId))
+        action(response, getMessageFromResponse(response))
     }
 
 }
 
 fun TestApplicationEngine.withGetAllMessages(action: (TestApplicationResponse, List<Message>) -> Unit) {
     with(handleRequest(HttpMethod.Get, "/messages")) {
-        action(response, MessagesDb.getMessages())
+        action(response, getMessagesFromResponse(response))
     }
 }
 
 fun TestApplicationEngine.withDeleteMessage(messageId: Int, action: (TestApplicationResponse) -> Unit) {
     with(handleRequest(HttpMethod.Delete, "/messages/$messageId")) {
         action(response)
+    }
+}
+
+private fun getMessageFromResponse(response: TestApplicationResponse): Message? {
+    return try {
+        serializer.decodeFromString<Message>(response.content ?: "")
+    } catch (d: Throwable) {
+        null
+    }
+}
+
+private fun getMessagesFromResponse(response: TestApplicationResponse): List<Message> {
+    return try {
+        serializer.decodeFromString<List<Message>>(response.content!!)
+    } catch (d: Throwable) {
+        listOf()
     }
 }

@@ -1,18 +1,18 @@
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 
 internal class BasicMessageLogicTests {
-
     @Test
     fun `Create a message`() = withTestApplication(Application::module) {
         val messageText = "Pomegranate"
         withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
-            assertTrue(response.content?.startsWith("Message created") ?: false)
             assertNotNull(message)
             assertNotNull(message.text)
             assertEquals(messageText, message.text)
@@ -28,7 +28,6 @@ internal class BasicMessageLogicTests {
             assertEquals(HttpStatusCode.Created, response.status())
             id = message.id
         }
-        id ?: return@withTestApplication
         withGetMessage(id!!) { response, message ->
             assertEquals(HttpStatusCode.Found, response.status())
             message ?: return@withGetMessage
@@ -47,11 +46,13 @@ internal class BasicMessageLogicTests {
     @Test
     fun `Get list of messages that isn't empty`() = withTestApplication(Application::module) {
         val messageText = "Apple"
-        withCreateMessage(messageText) { response, message ->
+        withCreateMessage(messageText) { response, _ ->
             assertEquals(HttpStatusCode.Created, response.status())
         }
+        Thread.sleep(100)
         withGetAllMessages { response, messages ->
             assertEquals(HttpStatusCode.Found, response.status())
+            println(messages)
             assertTrue(messages.isNotEmpty())
         }
     }
@@ -60,53 +61,39 @@ internal class BasicMessageLogicTests {
     @Test
     fun `Update`() = withTestApplication(Application::module) {
         val messageText = "Carrot"
-        var messageId: Int? = null
-        var updatedMessage: Message? = null
-        withCreateMessage(messageText) { response, message ->
-            assertEquals(HttpStatusCode.Created, response.status())
-            messageId = message.id
-        }
-        messageId ?: return@withTestApplication
-
-        withUpdateMessage(messageId!!, "Golden Carrot") { response, message ->
-            assertEquals(HttpStatusCode.OK, response.status())
-            updatedMessage = message
-        }
-
-        withGetMessage(messageId!!) { response, message ->
-            assertEquals(HttpStatusCode.Found, response.status())
-            assertEquals(messageId, updatedMessage!!.id)
-            //verify that lastUpdated is indeed changed
-        }
+        val originalMessage =
+            withCreateMessage(messageText) { response, message ->
+                assertEquals(HttpStatusCode.Created, response.status())
+            }
+        val updatedMessage =
+            withUpdateMessage(originalMessage.id, "Golden Carrot") { response, message ->
+                assertEquals(HttpStatusCode.OK, response.status())
+            }
+        assertEquals(originalMessage.id, updatedMessage!!.id)
+        assert(updatedMessage.dateEdited > updatedMessage.datePosted)
     }
 
     @Test
     fun `Delete`() = withTestApplication(Application::module) {
-        var messageId: Int? = null
         val messageText = "Carrot"
 
-        withCreateMessage(messageText) { response, message ->
+        val message = withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
-            messageId = message.id
-        }
-        messageId ?: return@withTestApplication
-        withGetMessage(messageId!!) { response, message ->
-            assertEquals(HttpStatusCode.Found, response.status())
-            assertEquals(messageId, message?.id)
         }
 
-        withDeleteMessage(messageId!!) {
+        withDeleteMessage(message.id) {
             assertEquals(HttpStatusCode.NoContent, it.status())
         }
 
-        withGetMessage(messageId!!) { response, message ->
+        withGetMessage(message.id) { response, message ->
             assertEquals(HttpStatusCode.NotFound, response.status())
+            assertNull(message)
         }
     }
 
     @Test
     fun `Not update none existing message`() = withTestApplication {
-        withUpdateMessage(-1, "") { response, message ->
+        withUpdateMessage(-1, "Nurdle") { response, _ ->
             assertEquals(HttpStatusCode.NotFound, response.status())
         }
     }
@@ -117,6 +104,28 @@ internal class BasicMessageLogicTests {
             assertEquals(HttpStatusCode.NotFound, it.status())
         }
     }
+
+//    @Test
+//    fun `Get field from message`() = withTestApplication {
+//        withCreateMessage("Potato"){ response, message ->
+//            assertEquals(HttpStatusCode.Created, response.status())
+//        }
+//    }
+//
+//    @Test
+//    fun `Fail to get field that doesn't exist from message`() {
+//        TODO()
+//    }
+//
+//    @Test
+//    fun `Get logic field from message`() {
+//        TODO()
+//    }
+//
+//    @Test
+//    fun `Fail to get logic field that doesn't exist from message`() {
+//        TODO()
+//    }
 
 }
 
