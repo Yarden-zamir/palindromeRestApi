@@ -47,7 +47,9 @@ gradle-app.setting
 .classpath
 
 ## build
-#build/
+build/kotlin
+build/reports
+build/test-results
 
 # other random things
 .idea/libraries/KotlinJavaRuntime.xml
