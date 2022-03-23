@@ -71,7 +71,7 @@ set CLASSPATH=%APP_HOME%\lib\palindromeRestApi-1.0-SNAPSHOT.jar;%APP_HOME%\lib\k
 
 
 @rem Execute palindromeRestApi
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %PALINDROME_REST_API_OPTS%  -classpath "%CLASSPATH%" MainKt %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %PALINDROME_REST_API_OPTS%  -classpath "%CLASSPATH%" ApplicationKt %*
 
 :end
 @rem End local scope for the variables with windows NT shell

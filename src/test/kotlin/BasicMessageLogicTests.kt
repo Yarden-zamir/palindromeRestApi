@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 
 internal class BasicMessageLogicTests {
     @Test
-    fun `Create a message`() = withTestApplication(Application::module) {
+    fun `Create a message`(): Unit = withTestApplication(Application::module) {
         val messageText = "Pomegranate"
         withCreateMessage(messageText) { response, message ->
             assertEquals(HttpStatusCode.Created, response.status())
@@ -62,11 +62,11 @@ internal class BasicMessageLogicTests {
     fun `Update`() = withTestApplication(Application::module) {
         val messageText = "Carrot"
         val originalMessage =
-            withCreateMessage(messageText) { response, message ->
+            withCreateMessage(messageText) { response, _ ->
                 assertEquals(HttpStatusCode.Created, response.status())
             }
         val updatedMessage =
-            withUpdateMessage(originalMessage.id, "Golden Carrot") { response, message ->
+            withUpdateMessage(originalMessage.id, "Golden Carrot") { response, _ ->
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         assertEquals(originalMessage.id, updatedMessage!!.id)
@@ -77,7 +77,7 @@ internal class BasicMessageLogicTests {
     fun `Delete`() = withTestApplication(Application::module) {
         val messageText = "Carrot"
 
-        val message = withCreateMessage(messageText) { response, message ->
+        val message = withCreateMessage(messageText) { response, _ ->
             assertEquals(HttpStatusCode.Created, response.status())
         }
 
@@ -85,14 +85,14 @@ internal class BasicMessageLogicTests {
             assertEquals(HttpStatusCode.NoContent, it.status())
         }
 
-        withGetMessage(message.id) { response, message ->
+        withGetMessage(message.id) { response, deletedMessage ->
             assertEquals(HttpStatusCode.NotFound, response.status())
-            assertNull(message)
+            assertNull(deletedMessage)
         }
     }
 
     @Test
-    fun `Not update none existing message`() = withTestApplication {
+    fun `Not update none existing message`(): Unit = withTestApplication {
         withUpdateMessage(-1, "Nurdle") { response, _ ->
             assertEquals(HttpStatusCode.NotFound, response.status())
         }
