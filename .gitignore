@@ -25,8 +25,8 @@ hs_err_pid*
 # Gradle
 .gradle/
 
-# build
-build/
+## build
+#build/
 
 # other random things
 .idea/libraries/KotlinJavaRuntime.xml
