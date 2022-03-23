@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="LogicFieldsTests" tests="3" skipped="0" failures="0" errors="0" timestamp="2022-03-23T07:16:43" hostname="PANDAPCREV3" time="1.069">
+  <properties/>
+  <testcase name="Shows that message is palindrome()" classname="LogicFieldsTests" time="1.052"/>
+  <testcase name="Logic field isPalindrome exists()" classname="LogicFieldsTests" time="0.008"/>
+  <testcase name="Shows that message is not palindrome()" classname="LogicFieldsTests" time="0.008"/>
+  <system-out><![CDATA[09:16:43.499 [Test worker] INFO ktor.test - Autoreload is disabled because the development mode is off.
+09:16:43.513 [Test worker] INFO ktor.test - Application started in 0.113 seconds.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
