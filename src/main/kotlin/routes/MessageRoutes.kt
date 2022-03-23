@@ -12,7 +12,9 @@ import java.time.LocalDateTime
 
 
 fun Route.messages() {
-    route("/messages") {
+    routes(
+        "/messages", "/v1/messages"
+    ) {
         createMessage()
 
         getMessages()
@@ -27,13 +29,20 @@ fun Route.messages() {
     }
 }
 
+fun Route.routes(vararg paths: String, build: Route.() -> Unit) {
+    for (path in paths) {
+        route(path, build)
+    }
+}
+
+var idProgression = 0
 private fun Route.createMessage() {
     post {
         val parameters = call.receiveParameters()
         val messageText = parameters["text"] ?: return@post call.respondText(
             "No text parameter for message", status = HttpStatusCode.BadRequest
         )
-        val message = Message(messageText)
+        val message = Message(messageText, idProgression++)
         MessagesDb.addMessage(message)
         call.respondText("Message created with id ${message.id}", status = HttpStatusCode.Created)
     }
@@ -44,7 +53,7 @@ private fun Route.getMessages() {
         if (MessagesDb.getMessages().isEmpty()) call.respondText(
             "No messages found", status = HttpStatusCode.NotFound
         )
-        else call.respondText("Messages : " + MessagesDb.getMessages().toString(), status = HttpStatusCode.Found)
+        else call.respondText("Messages : " + MessagesDb.asJson(), status = HttpStatusCode.Found)
 
     }
 }
@@ -56,10 +65,10 @@ private fun Route.getMessage() {
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
 
-        val message = MessagesDb.getMessages().find { it.id == idNumber }?.toString() ?: return@get call.respondText(
+        val message = MessagesDb.getMessages().find { it.id == idNumber } ?: return@get call.respondText(
             "No message with id $idNumber", status = HttpStatusCode.NotFound
         )
-        call.respondText(message, status = HttpStatusCode.Found)
+        call.respondText(message.asJson(), status = HttpStatusCode.Found)
     }
 }
 
