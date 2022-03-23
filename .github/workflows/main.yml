@@ -23,5 +23,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
       - name: Test with Gradle
         run: ./gradlew test
