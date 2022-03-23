@@ -12,6 +12,7 @@ fun TestApplicationEngine.withCreateMessage(
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
+        println(messageText+response.status())
         val message = getMessageFromResponse(response)!!
         action(response, message)
         return message
@@ -53,12 +54,16 @@ fun TestApplicationEngine.withDeleteMessage(messageId: Int, action: (TestApplica
     }
 }
 
-//fun TestApplicationEngine.withGetField(messageId: Int, fieldName: String, action: (TestApplicationResponse) -> Unit) {
-//    with(handleRequest(HttpMethod.Get, "/messages/$messageId/$fieldName")) {
-//        action(response)
-//    }
-//}
-
+fun TestApplicationEngine.withGetField(messageId: Int, fieldName: String, action: (TestApplicationResponse) -> Unit) {
+    with(handleRequest(HttpMethod.Get, "/messages/$messageId/$fieldName")) {
+        action(response)
+    }
+}
+fun TestApplicationEngine.withGetLogicField(messageId: Int, fieldName: String, action: (TestApplicationResponse) -> Unit) {
+    with(handleRequest(HttpMethod.Get, "/messages/$messageId/logicfields/$fieldName")) {
+        action(response)
+    }
+}
 private fun getMessageFromResponse(response: TestApplicationResponse): Message? {
     return try {
         serializer.decodeFromString<Message>(response.content ?: "")

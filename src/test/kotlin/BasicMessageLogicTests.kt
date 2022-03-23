@@ -90,41 +90,63 @@ internal class BasicMessageLogicTests {
     }
 
     @Test
-    fun `Not update none existing message`(): Unit = withTestApplication {
+    fun `Not update none existing message`(): Unit = withTestApplication(Application::module) {
         withUpdateMessage(-1, "Nurdle") { response, _ ->
             assertEquals(HttpStatusCode.NotFound, response.status())
         }
     }
 
     @Test
-    fun `Not delete none existing message`(): Unit = withTestApplication {
+    fun `Not delete none existing message`(): Unit = withTestApplication(Application::module) {
         withDeleteMessage(-1) {
             assertEquals(HttpStatusCode.NotFound, it.status())
         }
     }
 
     @Test
-    fun `Get field from message`(): Unit = withTestApplication {
-        val message = withCreateMessage("Potato"){ response, _ ->
+    fun `Get field from message`(): Unit = withTestApplication(Application::module) {
+        val message = withCreateMessage("Potato") { response, _ ->
             assertEquals(HttpStatusCode.Created, response.status())
         }
-
-        TODO()
+        withGetField(message.id, "text") { response ->
+            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(response.content, message.text)
+        }
+        withGetField(message.id, "datePosted") { response ->
+            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(response.content, message.datePosted.toString())
+        }
     }
 
     @Test
-    fun `Fail to get field that doesn't exist from message`(): Unit {
-        TODO()
+    fun `Fail to get field that doesn't exist from message`(): Unit = withTestApplication(Application::module) {
+        val message = withCreateMessage("Potato") { response, _ ->
+            assertEquals(HttpStatusCode.Created, response.status())
+        }
+        withGetField(message.id, "friends") { response ->
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
     }
 
     @Test
-    fun `Get logic field from message`(): Unit {
-        TODO()
+    fun `Get logic field from message`(): Unit = withTestApplication(Application::module) {
+        val message = withCreateMessage("Potato") { response, _ ->
+            assertEquals(HttpStatusCode.Created, response.status())
+        }
+        withGetLogicField(message.id, "palindrome") { response ->
+            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(response.content, message.logicFields["palindrome"])
+        }
     }
 
     @Test
-    fun `Fail to get logic field that doesn't exist from message`(): Unit {
-        TODO()
+    fun `Fail to get logic field that doesn't exist from message`(): Unit = withTestApplication(Application::module) {
+        val message = withCreateMessage("Potato") { response, _ ->
+            assertEquals(HttpStatusCode.Created, response.status())
+        }
+        withGetLogicField(message.id, "special") { response ->
+            assertEquals(HttpStatusCode.NotFound, response.status())
+        }
     }
 
 }
