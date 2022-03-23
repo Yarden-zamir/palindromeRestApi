@@ -22,8 +22,13 @@ The tests are all under `gradle test`
 When commiting, the tests will also run on the cloud and if they pass the code will be deployed on heroku  
 
 # API referance
-| Action           | Method | Endpoint         | Arguments                       |
-|------------------|--------|------------------|---------------------------------|
-| Create message   | POST   | v1/messages      | text={The text of the message}  |
-| Retrieve message | GET    | v1/messages/{id} |                                 |
-| Update message   | PUT    | v1/messages/{id} | text={New text for the message} |
+| Action                             | Method | Endpoint                             | Arguments                       |
+|------------------------------------|--------|--------------------------------------|---------------------------------|
+| Create message                     | POST   | v1/messages                          | text={The text of the message}  |
+| Delete message                     | DELETE | v1/messages/{id}                     |                                 |
+| Update message                     | PUT    | v1/messages/{id}                     | text={New text for the message} |
+| Retrieve all messages              | GET    | v1/messages                          |                                 |
+| Retrieve message                   | GET    | v1/messages/{id}                     |                                 |
+| Retrieve field from message        | GET    | v1/messages/{id}/{field}             |                                 |
+| Retrieve logic fields from message | GET    | v1/messages/{id}/logicfields         |                                 |
+| Retrieve logic field from message  | GET    | v1/messages/{id}/logicfields/{field} |                                 |
