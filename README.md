@@ -18,6 +18,7 @@ Built on
 
 Deployed on
 - Heroku
+- ~Google cloud~
 
 # Get started
 After cloning, use `gradle run` to run the project locally 
