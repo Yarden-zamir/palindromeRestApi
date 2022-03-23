@@ -6,6 +6,6 @@ import io.ktor.routing.*
 
 fun Route.root() {
     get("/") {
-        call.respondText("Goodbye world!")
+        call.respondText("Hello world!")
     }
 }
