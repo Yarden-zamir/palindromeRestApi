@@ -1,6 +1,8 @@
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.decodeFromString
+import model.Message
+import model.serializer
 
 fun TestApplicationEngine.withCreateMessage(
     messageText: String,
@@ -50,6 +52,12 @@ fun TestApplicationEngine.withDeleteMessage(messageId: Int, action: (TestApplica
         action(response)
     }
 }
+
+//fun TestApplicationEngine.withGetField(messageId: Int, fieldName: String, action: (TestApplicationResponse) -> Unit) {
+//    with(handleRequest(HttpMethod.Get, "/messages/$messageId/$fieldName")) {
+//        action(response)
+//    }
+//}
 
 private fun getMessageFromResponse(response: TestApplicationResponse): Message? {
     return try {

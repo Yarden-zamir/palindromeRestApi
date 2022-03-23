@@ -1,11 +1,13 @@
 package routes
 
-import Message
+import database.MessagesDb
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import model.Message
+import model.asJson
 import java.time.LocalDateTime
 
 //route content
@@ -53,7 +55,7 @@ private fun Route.getMessages() {
         if (MessagesDb.getMessages().isEmpty()) call.respondText(
             "No messages found", status = HttpStatusCode.NotFound
         )
-        else call.respondText(MessagesDb.asJson(), status = HttpStatusCode.Found)
+        else call.respondText(MessagesDb.getMessages().asJson(), status = HttpStatusCode.Found)
 
     }
 }

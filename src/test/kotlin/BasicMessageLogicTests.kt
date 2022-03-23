@@ -1,8 +1,6 @@
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -99,33 +97,35 @@ internal class BasicMessageLogicTests {
     }
 
     @Test
-    fun `Not delete none existing message`() = withTestApplication {
+    fun `Not delete none existing message`(): Unit = withTestApplication {
         withDeleteMessage(-1) {
             assertEquals(HttpStatusCode.NotFound, it.status())
         }
     }
 
-//    @Test
-//    fun `Get field from message`() = withTestApplication {
-//        withCreateMessage("Potato"){ response, message ->
-//            assertEquals(HttpStatusCode.Created, response.status())
-//        }
-//    }
-//
-//    @Test
-//    fun `Fail to get field that doesn't exist from message`() {
-//        TODO()
-//    }
-//
-//    @Test
-//    fun `Get logic field from message`() {
-//        TODO()
-//    }
-//
-//    @Test
-//    fun `Fail to get logic field that doesn't exist from message`() {
-//        TODO()
-//    }
+    @Test
+    fun `Get field from message`(): Unit = withTestApplication {
+        val message = withCreateMessage("Potato"){ response, _ ->
+            assertEquals(HttpStatusCode.Created, response.status())
+        }
+
+        TODO()
+    }
+
+    @Test
+    fun `Fail to get field that doesn't exist from message`(): Unit {
+        TODO()
+    }
+
+    @Test
+    fun `Get logic field from message`(): Unit {
+        TODO()
+    }
+
+    @Test
+    fun `Fail to get logic field that doesn't exist from message`(): Unit {
+        TODO()
+    }
 
 }
 
