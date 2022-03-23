@@ -19,6 +19,7 @@ Built on
 Deployed on
 - Heroku
 
-
 # Get started
-Run `gradle build` 
+After cloning, use `gradle run` to run the project locally 
+The tests are all under `gradle test`
+When commiting, the tests will also run on the cloud and if they pass the code will be deployed on heroku
