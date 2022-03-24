@@ -17,9 +17,15 @@
 # Pipeline
 ![image](https://user-images.githubusercontent.com/8178413/159715920-24b63252-b75e-4376-86c0-8f1629b31469.png)
 # Get started
-After cloning, use `gradle run` to run the project locally   
+After cloning, use `gradle run` to run the project locally
+By default the project will use an embedded database when launched, so you don't need to have anything else setup. If you do have a database, please define environment variables `db=true` and `JDBC_DATABASE_URL={your database url}`   
+example environment 
+```
+    db=true;JDBC_DATABASE_URL=jdbc:postgresql:messages?user=postgres&password=palindrome
+```  
+If you don't have a database, please run `gradle run`
 The tests are all under `gradle test`  
-When commiting, the tests will also run on the cloud and if they pass the code will be deployed on heroku  
+When committing, the tests will also run on the cloud and if they pass the code will be deployed on heroku  
 
 # API referance
 | Action                             | Method | Endpoint                             | Arguments                       |
