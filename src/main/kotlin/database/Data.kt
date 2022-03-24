@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 fun mainDb(): HikariDataSource {
     val config = HikariConfig()
     config.driverClassName = System.getenv("JDBC_DRIVER") ?: "org.postgresql.Driver"
-    config.jdbcUrl = System.getenv("JDBC_DATABASE_URL")
+    config.jdbcUrl = System.getenv("JDBC_DATABASE_URL") ?: "jdbc:postgresql:postgres?user=postgres&password=postgres"
     config.maximumPoolSize = 3
     config.isAutoCommit = false
     config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"

@@ -34,11 +34,13 @@ fun Application.configureStatusPage() {
 }
 
 fun Application.configureDatabase() {
-    if (getEnv() == "test" || getEnv() == "no-db") {
+    println("!!!"+getCfg("db"))
+    if (System.getenv("db")== "true")
+        Database.connect(mainDb())
+    else {
         val embeddedTestDb = EmbeddedPostgres.builder().start().postgresDatabase
         Database.connect(embeddedTestDb)
-    } else
-        Database.connect(mainDb())
+    }
     transaction { SchemaUtils.create(MessageTable) }
 }
 
