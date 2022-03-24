@@ -14,9 +14,8 @@
 
 - Built on kotlin and ktor
 - [Deployed on Heroku](https://palindrome-rest-api.herokuapp.com/) ~Google cloud 
-
-# Pipeline
-![image](https://user-images.githubusercontent.com/8178413/159715920-24b63252-b75e-4376-86c0-8f1629b31469.png)
+# Architecture doodle
+![image](https://user-images.githubusercontent.com/8178413/159892417-4b00d541-44af-4511-b573-3866605bd89c.png)
 # Get started
 ## Run the server
 After cloning, use `gradle run` to run the project locally  
