@@ -13,7 +13,7 @@
 </div>
 
 - Built on kotlin and ktor
-- [Deployed on Heroku](https://palindrome-rest-api.herokuapp.com/) ~Google cloud 
+- [Deployed on Heroku](https://palindrome-rest-api.herokuapp.com/) ~Google cloud~
 # Architecture doodle
 ![image](https://user-images.githubusercontent.com/8178413/159892417-4b00d541-44af-4511-b573-3866605bd89c.png)
 # Get started
