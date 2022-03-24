@@ -2,7 +2,7 @@
     <img src="https://user-images.githubusercontent.com/8178413/159716209-0f91e643-2b80-428a-a5f1-c7e8c7aea5d2.svg" alt="Logo" width="125" height="125">
 </h1>
 <div align="center">
-  A REST API that manages messages and preforms basic checks and operations on them
+  A REST API that manages messages and preforms basic checks/operations on them
   <br />
   <br />
   <a href="https://github.com/PandaBoy444/palindromeRestApi/issues/new?assignees=&labels=bug">Report a Bug</a>
