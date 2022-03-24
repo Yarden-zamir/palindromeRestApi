@@ -63,6 +63,8 @@ The tests are all under `gradle test`
 When committing, the tests will also run on the cloud and if they pass the code will be deployed on heroku  
 ## Use the live server
 You can visit and query the API at [palindrome-rest-api.herokuapp.com](https://palindrome-rest-api.herokuapp.com)
+## Use demo client
+You can download the client from https://github.com/PandaBoy444/palindromeClient, it is reacommended to use a terminal that supports colors like the [windows terminal](https://github.com/microsoft/terminal)
 ## API reference
 | Action                             | Method | Endpoint                                | Arguments                       |
 |------------------------------------|--------|-----------------------------------------|---------------------------------|
