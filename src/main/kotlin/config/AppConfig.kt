@@ -34,19 +34,12 @@ fun Application.configureStatusPage() {
 }
 
 fun Application.configureDatabase() {
-
-    if (getCfg("ktor.deployment.environment") == "test") {
+    if (getEnv() == "test" || getEnv() == "no-db") {
         val embeddedTestDb = EmbeddedPostgres.builder().start().postgresDatabase
         Database.connect(embeddedTestDb)
     } else
         Database.connect(mainDb())
-
-    //
-
-    transaction {
-        SchemaUtils.create(MessageTable)
-    }
-    MessagesDb.loadDb();
+    transaction { SchemaUtils.create(MessageTable) }
 }
 
 fun configureLogicFields(logicFunction: LogicFields.() -> Unit): LogicFields {

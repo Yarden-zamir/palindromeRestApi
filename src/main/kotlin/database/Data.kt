@@ -30,9 +30,6 @@ suspend fun <T> dbQuery(block: () -> T): T = withContext(Dispatchers.IO) {
 }
 
 object MessagesDb {
-    fun loadDb(initialData: MutableList<Message> = mutableListOf<Message>()) {
-//        messagesList = initialData
-    }
 
     fun getMessages(): List<Message> {
         val x = transaction {
