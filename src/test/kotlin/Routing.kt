@@ -10,7 +10,10 @@ internal class Routing {
         withTestApplication(Application::module) {
             handleRequest(HttpMethod.Get, "/").apply {
                 Assertions.assertEquals(HttpStatusCode.OK, response.status())
-                Assertions.assertEquals("Hello world!", response.content)
+                Assertions.assertEquals(
+                    "Hello and welcome to palindrome REST api, please visit https://github.com/PandaBoy444/palindromeRestApi for more info",
+                    response.content
+                )
             }
         }
     }
