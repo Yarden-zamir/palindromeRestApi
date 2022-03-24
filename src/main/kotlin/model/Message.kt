@@ -6,10 +6,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.dao.EntityID
 import java.time.LocalDateTime
 
-val serializer = Json {
-    encodeDefaults = true
-    prettyPrint = true
-}
+
 
 @Serializable
 data class Message(
