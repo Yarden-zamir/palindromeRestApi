@@ -50,12 +50,13 @@ private fun Route.createMessage() {
 
 private fun Route.getMessages() {
     get {
+        println("getting")
         val messages = MessagesDb.getMessages()
         if (messages.isEmpty()) call.respondText(
             "No messages found", status = HttpStatusCode.NotFound
         )
-        else call.respondText(messages.asJson(), status = HttpStatusCode.Found)
-
+        else call.respondText(messages.asJson(), status = HttpStatusCode.OK)
+        println("got "+messages.asJson())
     }
 }
 
@@ -69,7 +70,7 @@ private fun Route.getMessage() {
         val message = MessagesDb.getMessage(id) ?: return@get call.respondText(
             "No message with id $id", status = HttpStatusCode.NotFound
         )
-        call.respondText(message.asJson(), status = HttpStatusCode.Found)
+        call.respondText(message.asJson(), status = HttpStatusCode.OK)
     }
 }
 
@@ -116,13 +117,13 @@ private fun Route.getMessageField() {
         )
         val field = call.parameters["field"]!!
         when (field.lowercase()) {
-            "text" -> call.respondText(message.text, status = HttpStatusCode.Found)
-            "dateposted" -> call.respondText(message.datePosted, status = HttpStatusCode.Found)
-            "dateedited" -> call.respondText(message.dateEdited, status = HttpStatusCode.Found)
-            "id" -> call.respondText(message.id.toString(), status = HttpStatusCode.Found)
+            "text" -> call.respondText(message.text, status = HttpStatusCode.OK)
+            "dateposted" -> call.respondText(message.datePosted, status = HttpStatusCode.OK)
+            "dateedited" -> call.respondText(message.dateEdited, status = HttpStatusCode.OK)
+            "id" -> call.respondText(message.id.toString(), status = HttpStatusCode.OK)
             "logicfields", "logicfield", "fields" -> call.respondText(
                 message.getLogicFieldsAsJson(),
-                status = HttpStatusCode.Found
+                status = HttpStatusCode.OK
             )
             else -> call.respondText("No field with name $field", status = HttpStatusCode.NotFound)
         }
@@ -143,7 +144,7 @@ fun Route.getMessageLogicField() {
                 "logic field is invalid or doesn't exist",
                 status = HttpStatusCode.NotFound
             )
-            call.respondText(this, status = HttpStatusCode.Found)
+            call.respondText(this, status = HttpStatusCode.OK)
         }
     }
 }

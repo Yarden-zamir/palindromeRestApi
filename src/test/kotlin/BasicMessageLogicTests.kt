@@ -45,7 +45,7 @@ internal class BasicMessageLogicTests {
             id = message.id
         }
         withGetMessage(id!!) { response, message ->
-            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(HttpStatusCode.OK, response.status())
             message ?: return@withGetMessage
             assertEquals(messageText, message.text)
         }
@@ -67,7 +67,7 @@ internal class BasicMessageLogicTests {
         }
         Thread.sleep(100)
         withGetAllMessages { response, messages ->
-            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(HttpStatusCode.OK, response.status())
             println(messages)
             assertTrue(messages.isNotEmpty())
         }
@@ -127,11 +127,11 @@ internal class BasicMessageLogicTests {
             assertEquals(HttpStatusCode.Created, response.status())
         }
         withGetField(message.id, "text") { response ->
-            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(response.content, message.text)
         }
         withGetField(message.id, "datePosted") { response ->
-            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(response.content, message.datePosted.toString())
         }
     }
@@ -152,7 +152,7 @@ internal class BasicMessageLogicTests {
             assertEquals(HttpStatusCode.Created, response.status())
         }
         withGetLogicField(message.id, "palindrome") { response ->
-            assertEquals(HttpStatusCode.Found, response.status())
+            assertEquals(HttpStatusCode.OK, response.status())
             assertEquals(response.content, message.logicFields["palindrome"])
         }
     }
