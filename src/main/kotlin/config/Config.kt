@@ -10,3 +10,6 @@ fun Application.getCfg(entryName: String): String {
         ""
     }
 }
+fun Application.getEnv(): String{
+    return getCfg("ktor.deployment.environment")
+}
