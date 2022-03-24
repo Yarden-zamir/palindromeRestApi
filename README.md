@@ -26,6 +26,31 @@
 - [Deployed on Heroku](https://palindrome-rest-api.herokuapp.com/) ~Google cloud~
 # Architecture doodle
 ![image](https://user-images.githubusercontent.com/8178413/159892417-4b00d541-44af-4511-b573-3866605bd89c.png)
+
+The server is built in a way that is independent from palindrome checking, instead palindrome checking is added via a mini dsl like so
+```kotlin
+fun Application.module() {
+    //app logic here
+    configureLogicFields { //add any function you would like to evaluate as logic field
+        add(::palindrome)
+    }
+}
+```
+Then we we query ``v1/messages/{id}/logicfields/palindrome`` we get the output of said function on the given message (in this case true or false).  
+Adding additional logic is as simple as referancing a function
+```kotlin
+fun Application.module() {
+    //app logic here
+    configureLogicFields { //add any function you would like to evaluate as logic field
+        add(::palindrome)
+        add(::messageSize)
+    }   
+}
+fun messageSize(message: Message): String {
+    return message.text.length.toString()
+}
+```
+Now ``v1/messages/{id}/logicfields/messagesize`` will give us the length of the message's text content
 # Get started
 ## Run the server
 After cloning, use `gradle run` to run the project locally  
