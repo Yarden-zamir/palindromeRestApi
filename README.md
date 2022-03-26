@@ -78,3 +78,16 @@ You can download the client from https://github.com/PandaBoy444/palindromeClient
 | Retrieve logic fields from message | GET    | v1/messages/{id}/logicfields            |                                 |
 | Retrieve logic field from message  | GET    | v1/messages/{id}/logicfields/{field}    |                                 |
 | Check if a message is palindrome   | GET    | v1/messages/{id}/logicfields/palindrome |                                 |
+
+  
+## Dependencies
+Targeting jvm 1.8
+
+| Dependency                                                        | Version | Job                                                        |
+|-------------------------------------------------------------------|---------|------------------------------------------------------------|
+| [Kotlin](https://kotlinlang.org/)                                 | 1.6.10  | Language and friend                                        |
+| [Ktor](https://ktor.io/)                                          | 1.6.8   | Server framework                                           |
+| [Logback](https://logback.qos.ch/)                                | 1.2.5   | Logging                                                    |
+| [Exposed](https://github.com/JetBrains/Exposed)                   | 0.17.14 | Database abstraction and type safety                       |
+| [postgresql](https://jdbc.postgresql.org/)                        | 42.3.3  | Database                                                   |
+| [embedded-postgres](https://github.com/zonkyio/embedded-postgres) | 1.3.1   | Embedded database for testing and no database environments |
