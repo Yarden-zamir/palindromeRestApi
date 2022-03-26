@@ -2,7 +2,6 @@ package database
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import io.ktor.application.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import model.Message
@@ -33,7 +32,7 @@ object MessagesDb {
 
     fun getMessages(): List<Message> {
         val x = transaction {
-            MessageTable.selectAll().map { it.toMessage()!! }
+            MessageTable.selectAll().map { it.toMessage()!! }.sortedBy { it.id }
         }
         return x
     }
@@ -69,10 +68,23 @@ object MessagesDb {
 
     }
 
-    suspend fun updatedMessage(id: Int, text: String): Message? {
+    suspend fun replaceMessage(id: Int, messageText: String): Message {
         dbQuery {
             val now = LocalDateTime.now().toString()
-            MessageTable.update({
+            MessageTable.insertIgnore { table ->
+                table[MessageTable.id] = EntityID(id, MessageTable)
+                table[MessageTable.text] = messageText
+                table[MessageTable.datePosted] = now
+                table[MessageTable.dateEdited] = now
+            }
+        }
+        return getMessage(id)!!
+    }
+
+    suspend fun updateMessage(id: Int, text: String): Message? {
+        dbQuery {
+            val now = LocalDateTime.now().toString()
+            MessageTable.update(where = {
                 MessageTable.id eq id
             }) { table ->
                 table[MessageTable.text] = text
