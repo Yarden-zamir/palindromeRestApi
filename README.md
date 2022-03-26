@@ -36,8 +36,8 @@ fun Application.module() {
     }
 }
 ```
-Then we we query ``v1/messages/{id}/logicfields/palindrome`` we get the output of said function on the given message (in this case true or false).  
-Adding additional logic is as simple as referancing a function
+Then we query ``v1/messages/{id}/logicfields/palindrome`` we get the output of said function on the given message (in this case true or false).  
+Adding additional logic is as simple as referencing a function
 ```kotlin
 fun Application.module() {
     //app logic here
@@ -64,7 +64,7 @@ When committing, the tests will also run on the cloud and if they pass the code 
 ## Use the live server
 You can visit and query the API at [palindrome-rest-api.herokuapp.com](https://palindrome-rest-api.herokuapp.com)
 ## Use demo client
-You can download the client from https://github.com/PandaBoy444/palindromeClient/releases, it is reacommended to use a terminal that supports colors like the [windows terminal](https://github.com/microsoft/terminal)
+You can download the client from https://github.com/PandaBoy444/palindromeClient/releases, it is recommended to use a terminal that supports colors like the [Windows Terminal](https://github.com/microsoft/terminal)
 ## API reference
 | Action                             | Method | Endpoint                                | Arguments                       |
 |------------------------------------|--------|-----------------------------------------|---------------------------------|
