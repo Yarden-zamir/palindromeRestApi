@@ -1,8 +1,10 @@
+package ContextLogic
+
 import io.ktor.http.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.decodeFromString
 import model.Message
-import model.serializer
+import serializer
 
 fun TestApplicationEngine.withCreateMessage(
     messageText: String,
@@ -12,8 +14,23 @@ fun TestApplicationEngine.withCreateMessage(
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
-        println(messageText+response.status())
+        println(messageText + response.status())
         val message = getMessageFromResponse(response)!!
+        action(response, message)
+        return message
+    }
+}
+
+fun TestApplicationEngine.withReplaceMessage(
+    id: Int,
+    messageText: String,
+    action: (TestApplicationResponse, Message) -> Unit
+): Message {
+    with(handleRequest(HttpMethod.Put, "/messages/$id") {
+        addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
+        setBody(listOf("text" to messageText).formUrlEncode())
+    }) {
+        val message = getMessageFromResponseNotNull(response)
         action(response, message)
         return message
     }
@@ -24,7 +41,7 @@ fun TestApplicationEngine.withUpdateMessage(
     messageText: String,
     action: (TestApplicationResponse, Message?) -> Unit
 ): Message? {
-    with(handleRequest(HttpMethod.Put, "/messages/$id") {
+    with(handleRequest(HttpMethod.Patch, "/messages/$id") {
         addHeader(HttpHeaders.ContentType, ContentType.Application.FormUrlEncoded.toString())
         setBody(listOf("text" to messageText).formUrlEncode())
     }) {
@@ -59,17 +76,27 @@ fun TestApplicationEngine.withGetField(messageId: Int, fieldName: String, action
         action(response)
     }
 }
-fun TestApplicationEngine.withGetLogicField(messageId: Int, fieldName: String, action: (TestApplicationResponse) -> Unit) {
+
+fun TestApplicationEngine.withGetLogicField(
+    messageId: Int,
+    fieldName: String,
+    action: (TestApplicationResponse) -> Unit
+) {
     with(handleRequest(HttpMethod.Get, "/messages/$messageId/logicfields/$fieldName")) {
         action(response)
     }
 }
+
 private fun getMessageFromResponse(response: TestApplicationResponse): Message? {
     return try {
         serializer.decodeFromString<Message>(response.content ?: "")
     } catch (d: Throwable) {
         null
     }
+}
+
+private fun getMessageFromResponseNotNull(response: TestApplicationResponse): Message {
+   return serializer.decodeFromString<Message>(response.content ?: "")
 }
 
 private fun getMessagesFromResponse(response: TestApplicationResponse): List<Message> {

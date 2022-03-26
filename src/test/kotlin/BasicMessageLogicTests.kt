@@ -1,28 +1,12 @@
+import ContextLogic.*
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import io.zonky.test.db.postgres.embedded.EmbeddedPostgres
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 
 internal class BasicMessageLogicTests {
-
-
-//    var postgres: EmbeddedPostgres? = null
-//    @BeforeEach
-//    fun setup() {
-//        postgres = EmbeddedPostgres.start()
-////        val dataSource = postgres.postgresDatabase
-//    }
-//
-//
-//
-//    @Rule
 
     @Test
     fun `Create a message`(): Unit = withTestApplication(Application::module) {
@@ -33,6 +17,18 @@ internal class BasicMessageLogicTests {
             assertNotNull(message.text)
             assertEquals(messageText, message.text)
             assertEquals(message.dateEdited, message.datePosted)
+        }
+    }
+
+    @Test
+    fun `Put Creates a message`(): Unit = withTestApplication(Application::module) {
+        val messageText = "step on no pets"
+        withReplaceMessage(1, messageText) { response, message ->
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertNotNull(message)
+            assertNotNull(message.text)
+            assertEquals(messageText, message.text)
+
         }
     }
 
@@ -54,7 +50,7 @@ internal class BasicMessageLogicTests {
     @Test
     fun `Get empty list of messages`() = withTestApplication(Application::module) {
         withGetAllMessages { response, messages ->
-            assertEquals(HttpStatusCode.NotFound, response.status())
+            assertEquals(HttpStatusCode.OK, response.status())
             assertTrue(messages.isEmpty())
         }
     }
@@ -86,6 +82,7 @@ internal class BasicMessageLogicTests {
                 assertEquals(HttpStatusCode.OK, response.status())
             }
         assertEquals(originalMessage.id, updatedMessage!!.id)
+        assertEquals(updatedMessage.datePosted, originalMessage.datePosted)
         assert(updatedMessage.dateEdited > updatedMessage.datePosted)
     }
 

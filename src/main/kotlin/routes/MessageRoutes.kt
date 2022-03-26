@@ -7,7 +7,6 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import model.asJson
-import java.time.LocalDateTime
 
 //route content
 
@@ -23,6 +22,7 @@ fun Route.messages() {
         getMessageField()
         getMessageLogicField()
 
+        replaceMessage()
         updateMessage()
 
         deleteMessage()
@@ -31,9 +31,7 @@ fun Route.messages() {
 }
 
 fun Route.routes(vararg paths: String, build: Route.() -> Unit) {
-    for (path in paths) {
-        route(path, build)
-    }
+    for (path in paths) route(path, build)
 }
 
 var idProgression = 0
@@ -50,13 +48,8 @@ private fun Route.createMessage() {
 
 private fun Route.getMessages() {
     get {
-        println("getting")
         val messages = MessagesDb.getMessages()
-        if (messages.isEmpty()) call.respondText(
-            "No messages found", status = HttpStatusCode.NotFound
-        )
-        else call.respondText(messages.asJson(), status = HttpStatusCode.OK)
-        println("got "+messages.asJson())
+        call.respondText(messages.asJson(), status = HttpStatusCode.OK)
     }
 }
 
@@ -75,21 +68,32 @@ private fun Route.getMessage() {
 }
 
 private fun Route.updateMessage() {
+    patch("{id}") {
+        val parameters = call.receiveParameters()
+        val id = call.parameters["id"]!!.toIntOrNull() ?: return@patch call.respondText(
+            "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
+        )
+        val text = parameters["text"] ?: return@patch call.respondText(
+            "Text parameter is illegal or missing", status = HttpStatusCode.BadRequest
+        )
+        val message = MessagesDb.updateMessage(id, text)
+        if (message != null) {
+            call.respondText(message.asJson(), status = HttpStatusCode.OK)
+        }
+    }
+}
+
+private fun Route.replaceMessage() {
     put("{id}") {
         val parameters = call.receiveParameters()
         val id = call.parameters["id"]!!.toIntOrNull() ?: return@put call.respondText(
             "Illegal id, use numerical ids", status = HttpStatusCode.BadRequest
         )
-        if (!MessagesDb.doesMessageExists(id)) return@put call.respondText(
-            "No message with id $id", status = HttpStatusCode.NotFound
-        )
         val text = parameters["text"] ?: return@put call.respondText(
             "Text parameter is illegal or missing", status = HttpStatusCode.BadRequest
         )
-        val message = MessagesDb.updatedMessage(id, text)
-        if (message != null) {
-            call.respondText(message.asJson(), status = HttpStatusCode.OK)
-        }
+        val message = MessagesDb.replaceMessage(id,text)
+        call.respondText(message.asJson(), status = HttpStatusCode.OK)
     }
 }
 
