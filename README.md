@@ -78,7 +78,15 @@ You can download the client from https://github.com/PandaBoy444/palindromeClient
 | Retrieve logic fields from message | GET    | v1/messages/{id}/logicfields            |                                 |
 | Retrieve logic field from message  | GET    | v1/messages/{id}/logicfields/{field}    |                                 |
 | Check if a message is palindrome   | GET    | v1/messages/{id}/logicfields/palindrome |                                 |
-
+## Status code reference
+| Status code      |                             |                                         |
+|------------------|-----------------------------|-----------------------------------------|
+| 200 OK           | Found message/s             | Updated message                         |
+| 201 Created      | Message created             |                                         |
+| 204 No Content   | Message deleted             |                                         |
+| 400 Bad Request  | Parameter missing           | Illegal ID                              |
+| 404 Not Found    | Didn't find message with ID | Didn't find field/logic field with name |
+| 418 I'm a teapot | Refused to brew coffee      |                                         |
   
 ## Dependencies
 Targeting jvm 1.8
