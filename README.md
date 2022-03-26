@@ -44,7 +44,7 @@ fun Application.module() {
     configureLogicFields { //add any function you would like to evaluate as logic field
         add(::palindrome)
         add(::messageSize)
-    }   
+    }
 }
 fun messageSize(message: Message): String {
     return message.text.length.toString()
@@ -55,12 +55,12 @@ Now ``v1/messages/{id}/logicfields/messagesize`` will give us the length of the 
 ## Run the server
 After cloning, use `gradle run` to run the project locally  
 By default the project will use an embedded database when launched, so you don't need to have anything else setup. If you do have a database, please define environment variables `db=true` and `JDBC_DATABASE_URL={your database url}`   
-example environment 
+example environment
 ```
     db=true;JDBC_DATABASE_URL=jdbc:postgresql:messages?user=postgres&password=palindrome
 ```  
 The tests are all under `gradle test`  
-When committing, the tests will also run on the cloud and if they pass the code will be deployed on heroku  
+When committing, the tests will also run on the cloud and if they pass the code will be deployed on heroku
 ## Use the live server
 You can visit and query the API at [palindrome-rest-api.herokuapp.com](https://palindrome-rest-api.herokuapp.com)
 ## Use demo client
@@ -68,9 +68,10 @@ You can download the client from https://github.com/PandaBoy444/palindromeClient
 ## API reference
 | Action                             | Method | Endpoint                                | Arguments                       |
 |------------------------------------|--------|-----------------------------------------|---------------------------------|
-| Create message                     | POST   | v1/messages                             | text={The text of the message}  |
+| Create message                     | POST   | v1/messages                             | text={Text for new message}     |
 | Delete message                     | DELETE | v1/messages/{id}                        |                                 |
-| Update message                     | PUT    | v1/messages/{id}                        | text={New text for the message} |
+| Update message                     | PATCH  | v1/messages/{id}                        | text={New text for message}     |
+| Replace (or create) message        | PUT    | v1/messages/{id}                        | text={Text for new message}     |
 | Retrieve all messages              | GET    | v1/messages                             |                                 |
 | Retrieve message                   | GET    | v1/messages/{id}                        |                                 |
 | Retrieve field from message        | GET    | v1/messages/{id}/{field}                |                                 |
