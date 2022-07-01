@@ -57,6 +57,7 @@ internal class BasicMessageLogicTests {
 
     @Test
     fun `Get list of messages that isn't empty`() = withTestApplication(Application::module) {
+
         val messageText = "Apple"
         withCreateMessage(messageText) { response, _ ->
             assertEquals(HttpStatusCode.Created, response.status())

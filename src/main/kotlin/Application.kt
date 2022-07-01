@@ -26,5 +26,12 @@ fun Application.module() {
         add(::palindrome)
     }
 
+    gameState(players)
+
+
+    onPress("w",gmaeState){
+        moveEntityForward()
+        return gamesState
+    }
 }
 
