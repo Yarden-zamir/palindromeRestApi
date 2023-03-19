@@ -13,7 +13,7 @@
 </div>  
 
  ---
-[![Heroku](https://pyheroku-badge.herokuapp.com/?app=palindrome-rest-api)](https://palindrome-rest-api.herokuapp.com)
+<!---[![Heroku](https://pyheroku-badge.herokuapp.com/?app=palindrome-rest-api)](https://palindrome-rest-api.herokuapp.com)-->
 [![MIT](https://badgen.net/github/license/PandaBoy444/palindromeRestApi)](https://opensource.org/licenses/MIT)
 [![Kotlin style](https://badgen.net/badge/code%20style/kotlin-official/f2a)](https://kotlinlang.org/docs/coding-conventions.html)
 [![checks](https://badgen.net/github/checks/PandaBoy444/palindromeRestApi)](https://github.com/PandaBoy444/palindromeRestApi/actions)
